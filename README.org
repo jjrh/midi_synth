@@ -1,0 +1,3 @@
+
+* about
+  Some tests for doing synthizer stuff on the teensy3.1 with the audioshield.
