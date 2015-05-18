@@ -200,6 +200,42 @@ void synth_note_off(int midi_inp){
 }
 
 
+#define CV_FREQUENCY 74
+#define CV_RESONANCE 71
+#define CV_AMP_ATTACK 73
+#define CV_AMP_DECAY 9
+#define CV_AMP_SUSTAIN 12
+#define CV_AMP_RELEASE 72
+
+int quad_freq_val = 0;
+int quad_res_val = 0;
+
+void midi_cv(int type, int cv, int value){
+  if(cv == CV_FREQUENCY){
+    quad_freq_val = value*10;
+
+    biquad1.setLowpass(0, quad_freq_val, quad_res_val);
+    Serial.print("setting biquad1 lowpass(0,");
+    Serial.print(quad_freq_val);
+    Serial.print(",");
+    Serial.print(quad_res_val);
+    Serial.print(")\n");
+  }
+  if(cv == CV_RESONANCE){
+
+    quad_res_val = 0.99/(float)value;
+
+    biquad1.setLowpass(0, quad_freq_val, quad_res_val);
+    Serial.print("setting biquad1 lowpass(0,");
+    Serial.print(quad_freq_val);
+    Serial.print(",");
+    Serial.print(quad_res_val);
+    Serial.print(")\n");
+  }
+
+
+}
+
 
 
 void midi_input() {
@@ -211,10 +247,6 @@ void midi_input() {
       case NoteOn:
         note = MIDI.getData1();
 	synth_note_on(note);
-	/* waveform1.frequency(notes[note]); */
-	/* envelope1.noteOn(); */
-	/* waveform1.noteOn(); */
-
         velocity = MIDI.getData2();
         channel = MIDI.getChannel();
         if (velocity > 0) {
@@ -224,8 +256,6 @@ void midi_input() {
         }
         break;
       case NoteOff:
-
-	/* envelope1.noteOff(); */
         note = MIDI.getData1();
 	synth_note_off(note);
         velocity = MIDI.getData2();
@@ -233,8 +263,10 @@ void midi_input() {
         Serial.println(String("Note Off: ch=") + channel + ", note=" + note + ", velocity=" + velocity);
         break;
     default:
+
         d1 = MIDI.getData1();
         d2 = MIDI.getData2();
+	midi_cv(type,d1,d2);
         Serial.println(String("Message, type=") + type + ", data = " + d1 + " " + d2);
     }
     t = millis();
