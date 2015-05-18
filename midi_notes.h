@@ -1,3 +1,7 @@
+/*
+ source:
+  http://homes.soic.indiana.edu/donbyrd/INFO545Site-Spring07/MusicalPitchesTable.txt */
+
 float notes[127]={
   0,         //1
   0,         //2
