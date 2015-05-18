@@ -6,17 +6,6 @@
 #include "midi_notes.h"
 
 
-
-// GUItool: begin automatically generated code
-/* AudioSynthWaveform       waveform1;      //xy=188,240 */
-/* AudioEffectEnvelope      envelope1;      //xy=371,237 */
-/* AudioOutputI2S           i2s1;           //xy=565,241 */
-/* AudioConnection          patchCord1(waveform1, envelope1); */
-/* AudioConnection          patchCord2(envelope1, 0, i2s1, 0); */
-/* AudioConnection          patchCord3(envelope1, 0, i2s1, 1); */
-
-// GUItool: end automatically generated code
-
 // GUItool: begin automatically generated code
 AudioSynthWaveform       waveform4;      //xy=152,324
 AudioSynthWaveform       waveform2;      //xy=154,227
@@ -27,7 +16,8 @@ AudioEffectEnvelope      envelope3;      //xy=338,270
 AudioEffectEnvelope      envelope2;      //xy=340,209
 AudioEffectEnvelope      envelope1;      //xy=341,164
 AudioMixer4              mixer1;         //xy=532,221
-AudioOutputI2S           i2s1;           //xy=711,221
+AudioFilterBiquad        biquad1;        //xy=621,346
+AudioOutputI2S           i2s1;           //xy=782,213
 AudioConnection          patchCord1(waveform4, envelope4);
 AudioConnection          patchCord2(waveform2, envelope2);
 AudioConnection          patchCord3(waveform3, envelope3);
@@ -36,8 +26,13 @@ AudioConnection          patchCord5(envelope4, 0, mixer1, 3);
 AudioConnection          patchCord6(envelope3, 0, mixer1, 2);
 AudioConnection          patchCord7(envelope2, 0, mixer1, 1);
 AudioConnection          patchCord8(envelope1, 0, mixer1, 0);
-AudioConnection          patchCord9(mixer1, 0, i2s1, 0);
-AudioConnection          patchCord10(mixer1, 0, i2s1, 1);
+AudioConnection          patchCord9(mixer1, biquad1);
+AudioConnection          patchCord10(biquad1, 0, i2s1, 0);
+AudioConnection          patchCord11(biquad1, 0, i2s1, 1);
+// GUItool: end automatically generated code
+
+
+
 
 AudioControlSGTL5000     audioShield;     //xy=586,175
 // GUItool: end automatically generated code
@@ -48,6 +43,11 @@ AudioControlSGTL5000     audioShield;     //xy=586,175
 
 const int channel = 1;
 unsigned long t=0;
+
+int env_attack = 50;
+int env_decay = 50;
+int env_release = 250;
+
 
 void setup() {
   MIDI.begin(MIDI_CHANNEL_OMNI);
@@ -62,33 +62,33 @@ void setup() {
   audioShield.volume(0.45);
 
   waveform1.pulseWidth(0.5);
-  waveform1.begin(0.4, 220, WAVEFORM_PULSE);
+  waveform1.begin(0.4, 220, WAVEFORM_SAWTOOTH);
 
   waveform2.pulseWidth(0.5);
-  waveform2.begin(0.4, 220, WAVEFORM_PULSE);
+  waveform2.begin(0.4, 220, WAVEFORM_SAWTOOTH);
 
   waveform3.pulseWidth(0.5);
-  waveform3.begin(0.4, 220, WAVEFORM_PULSE);
+  waveform3.begin(0.4, 220, WAVEFORM_SAWTOOTH);
 
   waveform4.pulseWidth(0.5);
-  waveform4.begin(0.4, 220, WAVEFORM_PULSE);
+  waveform4.begin(0.4, 220, WAVEFORM_SAWTOOTH);
 
 
-  envelope1.attack(50);
-  envelope1.decay(50);
-  envelope1.release(250);
+  envelope1.attack(env_attack);
+  envelope1.decay(env_decay);
+  envelope1.release(env_release);
 
-  envelope2.attack(50);
-  envelope2.decay(50);
-  envelope2.release(250);
+  envelope2.attack(env_attack);
+  envelope2.decay(env_decay);
+  envelope2.release(env_release);
 
-  envelope3.attack(50);
-  envelope3.decay(50);
-  envelope3.release(250);
+  envelope3.attack(env_attack);
+  envelope3.decay(env_decay);
+  envelope3.release(env_release);
 
-  envelope4.attack(50);
-  envelope4.decay(50);
-  envelope4.release(250);
+  envelope4.attack(env_attack);
+  envelope4.decay(env_decay);
+  envelope4.release(env_release);
 }
 
 void loop(){
